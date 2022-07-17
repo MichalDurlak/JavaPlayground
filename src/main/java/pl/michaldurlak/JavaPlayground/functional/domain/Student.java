@@ -3,7 +3,7 @@ package pl.michaldurlak.JavaPlayground.functional.domain;
 import java.util.Optional;
 
 // żadna klasa nie będzie po niej dziedziczyć, niemodyfikowalne
-final public class Student {
+final public class Student{
 
     private String name;
     private int age;
@@ -38,6 +38,7 @@ final public class Student {
     public Student changeIndexNumber(String newIndexNumber){
         return new Student(this.name,this.age,newIndexNumber);
     }
+
 
     // nie ustawiamy tutaj setterow, żeby pod żadnym pozorem nie móc modyfikować wprowadzonych danych
     // musimy się upewnić również że inne klasy nie mogą modyfikować pul

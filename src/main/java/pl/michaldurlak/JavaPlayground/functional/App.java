@@ -5,9 +5,14 @@ import pl.michaldurlak.JavaPlayground.functional.domain.Student;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.SortedMap;
 import java.util.function.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.groupingBy;
 
 public class App {
 
@@ -201,9 +206,149 @@ public class App {
 
         // map -> na podstawie indexu (ktory moze byc lub moze go nie być), przemapuje nam index na stringa którym jest numer indeksu
 //        indexFirstStudent.map()
+
+
+// STREAM API
+        // do tego potrzebujemy danych w tym przypadku liste studentow, pozniej filtrujemy to, metoda mapowania jednej metody na druga, nastepnie dla kazdego rekordu przypisac akcje
+        List<Student> students = supplyPredefinedStudents.get();
+        Consumer<String> print = System.out::println;
+        students.stream().filter(over30).map(getStudentNameFunction).forEach(print);
+
+        // nie mozna iterować drugi raz po tym samym strumieniu
+
+        // zestaw danych -> operacje pośrednie, które zwracają strumień -> operacja terminalna, która kończy
+        // opis akcji: 1. stworzylismy stream, 2. sprawdzilismy wiek, 3. przemapowalismy to na stringa, 4. wypisalismy
+
+
+        // Generowanie wartości dla strumieni
+        // na przyklad poprzez Stream.of()
+        Stream.of("a","b","c","d").forEach(System.out::println);
+        // stworzenie ich na podstawie kolekcji
+        List<Student> studentsList = createData();
+        Stream<Student> studentsStream = studentsList.stream();
+        // na podstawie supplier
+        Stream.generate(() -> Math.random()).limit(10).forEach(System.out::println);
+        // nieskonczony strumień (trzeba usunac limit, by bylo nieskonczone)
+        Stream.iterate(0, k -> k+2).limit(4).forEach(System.out::println);
+
+        //Stream ktory zaczyna na 1 i konczy na 99
+        IntStream.range(1,100);
+        //Stream który zaczyna na 1 i konczy na 100
+        IntStream.rangeClosed(1,100);
+        //Stream, ktory wypisze nam liczby parzyste z przedzialu 1 do 100
+        IntStream.rangeClosed(1,100).filter(p -> p%2==0).forEach(System.out::println);
+
+        // streamy:
+        // na podstawie kolekcji
+        // na podstawie suppliera
+        // na podstawie iterate
+        // strumień prymitywów
+
+        Stream<Student> listStudentStream = createDataStream();
+// FILTER
+// operacje pośrednie filter
+        // filter przepuszcza rekordy ktore spelniaja założenie
+        createDataStream().filter(student -> student.getName().equals("Billy")).filter(student -> student.getAge() >30).forEach(System.out::println);
+
+// MAP
+        // map to mapowanie jednej wartości na drugą
+        createDataStream()
+                .filter(student -> student.getName().equals("Billy"))
+                .map(Student::getName)
+                .map(String::toUpperCase)
+                .forEach(System.out::println);
+
+        createDataStream()
+                .map(Student::getIndex)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(Indeks::getIndexNumber)
+                .forEach(System.out::println);
+
+        // map jest to metoda dla strumieni, ktora na podstawie przeslanej funkcji modyfikuje jeden typ obiektu na drugi obiekt
+        // na przyklad studenta w stringa
+
+
+// FindFirst, AnyMatch, AllMatch
+        // bierze pierwszy obiekt ktory dotrze do streama
+        createDataStream()
+                .filter(over30)
+                .findFirst().ifPresent(student -> System.out.println("Mamy studenta powyzej 30 roku"));
+        // sprawdza czy dowolny parametr spelnia wymaganie -> zwraca boolean
+        createDataStream()
+                .map(Student::getName)
+                .anyMatch(name -> name.equals("John"));
+        // czy wszystkie paraetry z listy spelniaja oczekiwanie -> zwraca boolean
+        createDataStream()
+                .map(Student::getName)
+                .allMatch(name -> name.equals("John"));
+        // odwrotne sprawdzanie
+        createDataStream()
+                .map(Student::getName)
+                .noneMatch(name -> name.equals("John"));
+
+
+// Reduce
+        // zredukowanie ca;lego streama do jednej
+        Double sumOfRandomDoubles = Stream.generate(Math::random).limit(10).reduce(0.0, (aDouble, aDouble2) -> aDouble + aDouble2);
+        Double sumOfRandomDoubles1 = Stream.generate(Math::random).limit(10).reduce(0.0, Double::sum);
+        System.out.println(sumOfRandomDoubles);
+
+        Optional<Integer> maxAgeOfStudent = createDataStream()
+                .map(Student::getAge)
+                .reduce(Integer::max);
+
+        maxAgeOfStudent.ifPresent(System.out::println);
+
+
+// Collect
+        List<Integer> collect = createData().stream().map(Student::getAge).collect(Collectors.toList());
+        String allAges = createDataStream().map(Student::getAge).map(Object::toString).collect(Collectors.joining(", "));
+        System.out.println(allAges);
+
+        Map<Integer, List<Student>> studentsByAge = createDataStream().collect(groupingBy(Student::getAge));
+        studentsByAge.forEach(new BiConsumer<Integer, List<Student>>() {
+            @Override
+            public void accept(Integer integer, List<Student> students) {
+                System.out.println(integer);
+                students.stream().map(Student::getName).forEach(System.out::println);
+            }
+        });
+
+        // reducer -> specjalna metoda ktora przetwarza caly stream na jedna zmienna
+        // collector -> zebrac wszystkie obiekty i zwrocic mape lub liste posortowana po filtrach, etc
+
+
+
+// Limit, skip, distinct, sorted, count
+        System.out.println("-------------");
+        // limituje od poczatku
+        createDataStream().limit(3).map(Student::getName).forEach(System.out::println);
+        // pomija poczatkowe rekordy
+        createDataStream().skip(3).map(Student::getName).forEach(System.out::println);
+        // przechodza tylko unikalne rekordy, tylko na poczatku trzeba ustawic hash
+        createDataStream().distinct().map(Student::getName).forEach(System.out::println);
+        // sorted -> sorted bez żadnych argumentow, sortuje elementy (implements Comparable dodajemy do klasy)
+        //count -> reducer, ktory zwęża do longa. Zlicza ilość elementów w Streamie.
+        System.out.println(createDataStream().count());
+
+
+// strumienie typów prymitywnych
+        IntStream intStream = createDataStream().map(Student::getAge).mapToInt(value -> value.intValue());
+        intStream.sorted().forEach(System.out::println);
+
+
     }
 
+    private static Stream<Student> createDataStream(){
+        Student pawel = new Student("Pawel", 31, "123456");
+        Student john = new Student("John", 29, "1234567");
+        Student billy = new Student("Billy", 32, "1234568");
+        Student billy2 = new Student("Billy", 28, "12345689");
+        Student mark = new Student("Mark", 29, "123456898");
 
+        return Stream.of(pawel,john,billy,billy2,mark);
+    }
 
     private static void referenceMethodTest(String x){
 
