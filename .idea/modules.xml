@@ -3,6 +3,12 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/JavaPlayground.iml" filepath="$PROJECT_DIR$/JavaPlayground.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pl.michaldurlak.AccoutingModule/pl.michaldurlak.AccoutingModule.iml" filepath="$PROJECT_DIR$/pl.michaldurlak.AccoutingModule/pl.michaldurlak.AccoutingModule.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pl.michaldurlak.HRModule/pl.michaldurlak.HRModule.iml" filepath="$PROJECT_DIR$/pl.michaldurlak.HRModule/pl.michaldurlak.HRModule.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pl.michaldurlak.MainModule/pl.michaldurlak.MainModule.iml" filepath="$PROJECT_DIR$/pl.michaldurlak.MainModule/pl.michaldurlak.MainModule.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pl.michaldurlak.PayrollService/pl.michaldurlak.PayrollService.iml" filepath="$PROJECT_DIR$/pl.michaldurlak.PayrollService/pl.michaldurlak.PayrollService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pl.michaldurlak.PolishPayroll/pl.michaldurlak.PolishPayroll.iml" filepath="$PROJECT_DIR$/pl.michaldurlak.PolishPayroll/pl.michaldurlak.PolishPayroll.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pl.michaldurlak.SupplyModule/pl.michaldurlak.SupplyModule.iml" filepath="$PROJECT_DIR$/pl.michaldurlak.SupplyModule/pl.michaldurlak.SupplyModule.iml" />
     </modules>
   </component>
 </project>
